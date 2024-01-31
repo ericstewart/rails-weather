@@ -1,0 +1,22 @@
+<turbo-frame id='weather_results'>
+    <h1>Weather at <%= params['zip'] %></h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>As of:</th>
+                <td>
+                    <%= DateTime.parse(@realtime_results.dig('data', 'time')).to_formatted_s(:long) %> UTC 
+                </td>
+            </tr>
+            <tr>
+               <th>Current Temp:</th>
+               <td><%= @realtime_results.dig('data', 'values', 'temperature') %> F</td>
+            </tr>
+            <tr>
+               <th>Feels Like:</th>
+               <td><%= @realtime_results.dig('data', 'values', 'temperatureApparent') %> F</td>
+            </tr>
+        </tbody>
+     </table>
+</turbo-frame>
