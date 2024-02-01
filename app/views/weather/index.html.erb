@@ -2,11 +2,11 @@
 
 
 <%= form_tag weather_results_path, method: :get, data: { 'turbo-frame' => 'weather_results' } do %>
-    <%= label_tag 'zip', 'Zip Code', class: 'form-label' %>
-    <%= text_field_tag 'zip', nil, maxlength: 5, class: 'form-control' %>    
+    <%= label_tag 'zip_code', 'Zip Code', class: 'form-label' %>
+    <%= text_field_tag 'zip_code', nil, maxlength: 5, class: 'form-control' %>    
     <%= submit_tag 'Check', class: 'btn btn-primary' %>
 <% end %>
 
-
+<!-- Provide a place to put the last fetched results -->
 <turbo-frame id='weather_results'>
 </turbo-frame>

@@ -1,6 +1,3 @@
-require 'uri'
-require 'net/http'
-
 class WeatherController < ApplicationController
     def index
     end
@@ -8,7 +5,8 @@ class WeatherController < ApplicationController
     def results
         @realtime_fetched = false
 
-        @realtime_results = current_weather(params)
+        @weather = LocationWeather.new(params['zip_code'])
+
         puts @realtime_results
 
         render partial: 'results'
@@ -17,21 +15,5 @@ class WeatherController < ApplicationController
     private
 
     def current_weather(params)
-        Rails.logger.info("Getting current weather for #{params['zip']}")
-
-        Rails.cache.fetch("weather/realtime/#{params['zip']}", expires_in: 30.minutes.to_i) do
-            Rails.logger.info("Calling external API")
-            @realtime_fetched = true
-            url = URI("https://api.tomorrow.io/v4/weather/realtime?location=#{params['zip']}&units=imperial&apikey=qX2IjL8zBwuDS7cAmL1yrOeqFf0FVnaH")
-
-            http = Net::HTTP.new(url.host, url.port)
-            http.use_ssl = true
-
-            request = Net::HTTP::Get.new(url)
-            request["accept"] = 'application/json'
-
-            response = http.request(request)
-            JSON.parse(response.read_body)
-        end
     end
 end

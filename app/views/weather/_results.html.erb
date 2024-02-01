@@ -6,25 +6,25 @@
             <tr>
                 <th>Location:</th>
                 <td>
-                    <%= @realtime_results.dig('location', 'name') %>
+                    <%= @weather.current.dig('location', 'name') %>
                 </td>
             </tr>
             <tr>
                 <th>As of:</th>
                 <td>
-                    <%= DateTime.parse(@realtime_results.dig('data', 'time')).to_formatted_s(:long) %> UTC 
-                    <% unless @realtime_fetched %>
+                    <%= DateTime.parse(@weather.current.dig('data', 'time')).to_formatted_s(:long) %> UTC 
+                    <% unless @weather.current_fetched %>
                        <span class="badge rounded-pill text-bg-info">cached</span> 
                     <% end %>
                 </td>
             </tr>
             <tr>
                <th>Current Temp:</th>
-               <td><%= @realtime_results.dig('data', 'values', 'temperature') %> F</td>
+               <td><%= @weather.current.dig('data', 'values', 'temperature') %> F</td>
             </tr>
             <tr>
                <th>Feels Like:</th>
-               <td><%= @realtime_results.dig('data', 'values', 'temperatureApparent') %> F</td>
+               <td><%= @weather.current.dig('data', 'values', 'temperatureApparent') %> F</td>
             </tr>
         </tbody>
      </table>
