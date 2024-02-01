@@ -4,7 +4,7 @@ require 'net/http'
 class WeatherController < ApplicationController
     def index
     end
-    
+
     def results
         @realtime_fetched = false
 
@@ -17,17 +17,21 @@ class WeatherController < ApplicationController
     private
 
     def current_weather(params)
-        Rails.logger.info("Calling external API")
-        @ealtime_fetched = true
-        url = URI("https://api.tomorrow.io/v4/weather/realtime?location=#{params['zip']}&units=imperial&apikey=qX2IjL8zBwuDS7cAmL1yrOeqFf0FVnaH")
+        Rails.logger.info("Getting current weather for #{params['zip']}")
 
-        http = Net::HTTP.new(url.host, url.port)
-        http.use_ssl = true
+        Rails.cache.fetch("weather/realtime/#{params['zip']}", expires_in: 30.minutes.to_i) do
+            Rails.logger.info("Calling external API")
+            @realtime_fetched = true
+            url = URI("https://api.tomorrow.io/v4/weather/realtime?location=#{params['zip']}&units=imperial&apikey=qX2IjL8zBwuDS7cAmL1yrOeqFf0FVnaH")
 
-        request = Net::HTTP::Get.new(url)
-        request["accept"] = 'application/json'
+            http = Net::HTTP.new(url.host, url.port)
+            http.use_ssl = true
 
-        response = http.request(request)
-        JSON.parse(response.read_body)
+            request = Net::HTTP::Get.new(url)
+            request["accept"] = 'application/json'
+
+            response = http.request(request)
+            JSON.parse(response.read_body)
+        end
     end
 end

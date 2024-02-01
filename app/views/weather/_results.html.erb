@@ -4,9 +4,18 @@
     <table class="table">
         <tbody>
             <tr>
+                <th>Location:</th>
+                <td>
+                    <%= @realtime_results.dig('location', 'name') %>
+                </td>
+            </tr>
+            <tr>
                 <th>As of:</th>
                 <td>
                     <%= DateTime.parse(@realtime_results.dig('data', 'time')).to_formatted_s(:long) %> UTC 
+                    <% unless @realtime_fetched %>
+                       <span class="badge rounded-pill text-bg-info">cached</span> 
+                    <% end %>
                 </td>
             </tr>
             <tr>
