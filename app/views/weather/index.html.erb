@@ -1,12 +1,18 @@
-<h1>Weather for Location</h1>
+<div class="container">
+    <h1>Weather for Location</h1>
 
 
-<%= form_tag weather_results_path, method: :get, data: { 'turbo-frame' => 'weather_results' } do %>
-    <%= label_tag 'zip_code', 'Zip Code', class: 'form-label' %>
-    <%= text_field_tag 'zip_code', nil, maxlength: 5, class: 'form-control' %>    
-    <%= submit_tag 'Check', class: 'btn btn-primary' %>
-<% end %>
+    <%= form_tag weather_results_path, method: :get, class: 'form weather-form', data: { 'turbo-frame' => 'weather_results' } do %>
+        <div class="row mb-3">
+        <div class="input-group">
+        <%= label_tag 'zip_code', 'Zip Code', class: 'form-label col-sm-2' %>
+        <%= text_field_tag 'zip_code', nil, type: :number, minlength: 1, required: true, step: 'any', placeholder: 'valid zip-code', class: 'form-control-sm col-sm-3' %>    
+        <%= submit_tag 'Check', class: 'btn btn-outline-secondary' %>
+        </div>
+        </div>
+    <% end %>
 
-<!-- Provide a place to put the last fetched results -->
-<turbo-frame id='weather_results'>
-</turbo-frame>
+    <!-- Provide a place to put the last fetched results -->
+    <turbo-frame id='weather_results'>
+    </turbo-frame>
+</div>
