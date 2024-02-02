@@ -22,22 +22,23 @@ class LocationWeather
   # Retrieve current conditions for a zip code.  Data may be cached but expected to be sufficiently recent.
   def fetch_current
     Rails.logger.info("Getting current weather for #{@zip_code}")
-
-    @current, @forecast = Rails.cache.fetch(['weather','current',@zip_code].join('/'), expires_in: 30.minutes.to_i) do
+    @current = Rails.cache.fetch(['weather','current',@zip_code].join('/'), expires_in: 30.minutes) do
         Rails.logger.info("Calling external API")
 
         @current_fetched = true
-        url = URI(CONDITIONS_ENDPOINT_URL + "?location=#{@zip_code}&units=#{@units}&apikey=#{ENV['TOMORROW_API_KEY']}")
+        url = URI(CONDITIONS_ENDPOINT_URL)
+        wx_params = {
+          'location' => @zip_code,
+          'units' => @units,
+          'apikey' => ENV['TOMORROW_API_KEY']
+        }
 
-        http = Net::HTTP.new(url.host, url.port)
-        http.use_ssl = true
-
-        request = Net::HTTP::Get.new(url)
-        request["accept"] = 'application/json'
-
-        response = http.request(request)
-        response_json = JSON.parse(response.read_body)
-        response_json
+        conn = Faraday.new(CONDITIONS_ENDPOINT_URL) do |f|
+          f.request :json
+          f.response :json
+        end
+        response = conn.get('', wx_params, { 'Accept' => 'application/json'})
+        response.body
     end
 
     Rails.logger.debug(@current)
