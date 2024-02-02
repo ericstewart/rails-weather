@@ -3,12 +3,10 @@
 
 
     <%= form_tag weather_results_path, method: :get, class: 'form weather-form', data: { 'turbo-frame' => 'weather_results' } do %>
-        <div class="row mb-3">
-        <div class="input-group">
-        <%= label_tag 'zip_code', 'Zip Code', class: 'form-label col-sm-2' %>
-        <%= text_field_tag 'zip_code', nil, type: :number, minlength: 1, required: true, step: 'any', placeholder: 'valid zip-code', class: 'form-control-sm col-sm-3' %>    
-        <%= submit_tag 'Check', class: 'btn btn-outline-secondary' %>
-        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Zip Code</span>
+            <%= text_field_tag 'zip_code', nil, type: :number, minlength: 1, required: true, step: 'any', placeholder: 'valid zip-code', class: 'form-control-sm' %>    
+            <%= submit_tag 'Check', class: 'btn btn-outline-secondary' %>
         </div>
     <% end %>
 
