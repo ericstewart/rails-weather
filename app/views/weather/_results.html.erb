@@ -1,31 +1,33 @@
 <turbo-frame id='weather_results'>
-    <h1>Weather at <%= params['zip'] %></h1>
+    <h1>Weather at <%= @weather.zip_code %></h1>
+    <% unless @weather.current_fetched %>
+      <span class="badge rounded-pill text-bg-info">cached</span> 
+    <% end %>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Location:</th>
-                <td>
-                    <%= @weather.current.dig('location', 'name') %>
-                </td>
-            </tr>
-            <tr>
-                <th>As of:</th>
-                <td>
-                    <%= DateTime.parse(@weather.current.dig('data', 'time')).to_formatted_s(:long) %> UTC 
-                    <% unless @weather.current_fetched %>
-                       <span class="badge rounded-pill text-bg-info">cached</span> 
-                    <% end %>
-                </td>
-            </tr>
-            <tr>
-               <th>Current Temp:</th>
-               <td><%= @weather.current.dig('data', 'values', 'temperature') %> F</td>
-            </tr>
-            <tr>
-               <th>Feels Like:</th>
-               <td><%= @weather.current.dig('data', 'values', 'temperatureApparent') %> F</td>
-            </tr>
-        </tbody>
-     </table>
+    <%= cache(['weather_results', @weather.zip_code, @weather.current.dig('data', 'time')]) do %>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>As of:</th>
+                    <td>
+                        <%= DateTime.parse(@weather.current.dig('data', 'time')).to_formatted_s(:long) %> UTC 
+                    </td>
+                </tr>
+                <tr>
+                    <th>Location:</th>
+                    <td>
+                        <%= @weather.current.dig('location', 'name') %>
+                    </td>
+                </tr>
+                <tr>
+                   <th>Current Temp:</th>
+                   <td><%= [@weather.current.dig('data', 'values', 'temperature'), temperature_units_for(@weather.units)].join(' ') %> </td>
+                </tr>
+                <tr>
+                   <th>Feels Like:</th>
+                   <td><%= [@weather.current.dig('data', 'values', 'temperatureApparent'), temperature_units_for(@weather.units)].join(' ') %> </td>
+                </tr>
+            </tbody>
+        </table>
+    <% end %>
 </turbo-frame>
