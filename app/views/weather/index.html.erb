@@ -1,16 +1,21 @@
-<div class="container">
-    <h1>Weather for Location</h1>
+<div class="container-md">
+    <div class="row align-items-center">
+    <div class="col"></div>
+    <div class="col">
+        <h1>Weather for Location</h1>
 
+        <%= form_tag weather_results_path, method: :get, class: 'form weather-form', data: { 'turbo-frame' => 'weather_results' } do %>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Zip Code</span>
+                <%= text_field_tag 'zip_code', nil, type: :number, minlength: 1, required: true, step: 'any', placeholder: 'valid zip-code', class: 'form-control-sm' %>    
+                <%= submit_tag 'Check', class: 'btn btn-sm btn-outline-secondary' %>
+            </div>
+        <% end %>
 
-    <%= form_tag weather_results_path, method: :get, class: 'form weather-form', data: { 'turbo-frame' => 'weather_results' } do %>
-        <div class="input-group mb-3">
-            <span class="input-group-text">Zip Code</span>
-            <%= text_field_tag 'zip_code', nil, type: :number, minlength: 1, required: true, step: 'any', placeholder: 'valid zip-code', class: 'form-control-sm' %>    
-            <%= submit_tag 'Check', class: 'btn btn-outline-secondary' %>
-        </div>
-    <% end %>
+        <!-- Provide a place to put the last fetched results -->
+        <turbo-frame id='weather_results'>
+        </turbo-frame>
+    </div>
 
-    <!-- Provide a place to put the last fetched results -->
-    <turbo-frame id='weather_results'>
-    </turbo-frame>
+    <div class="col"></div>
 </div>
