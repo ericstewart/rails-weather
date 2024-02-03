@@ -5,7 +5,7 @@
     <% end %>
 
     <%= cache(['weather_results', @weather.zip_code, @weather.current.dig('data', 'time')]) do %>
-        <table class="table">
+        <table class="table table-sm">
             <tbody>
                 <tr>
                     <th>As of:</th>
@@ -17,16 +17,19 @@
                     <th>Location:</th>
                     <td>
                         <%= @weather.current.dig('location', 'name') %>
+                        <%= @weather.current.dig('location', 'lat') -%> <%= @weather.current.dig('location', 'lon') %>
                     </td>
                 </tr>
                 <tr>
-                   <th>Current Temp:</th>
-                   <td><%= [@weather.current.dig('data', 'values', 'temperature'), temperature_units_for(@weather.units)].join(' ') %> </td>
+                   <th>Conditions</th>
+                   <td><%= display_for_weather_code(@weather.current.dig('data', 'values', 'weatherCode')) %></td>
                 </tr>
-                <tr>
-                   <th>Feels Like:</th>
-                   <td><%= [@weather.current.dig('data', 'values', 'temperatureApparent'), temperature_units_for(@weather.units)].join(' ') %> </td>
-                </tr>
+                <% @weather_fields.each do |field, title, unit|  %>
+                    <tr>
+                       <th><%= title %></th>
+                       <td><%= [@weather.current.dig('data', 'values', field), unit].join('') %> </td>
+                    </tr>
+                <% end %>
             </tbody>
         </table>
     <% end %>

@@ -4,10 +4,15 @@ This is a web application that serves basic weather information given a requeste
 
 ## Design
 
-At this stage of functionality, no database is needed since the only persisted data is cached from api calls and renders.
+At this stage of functionality, no database is needed since the only persisted data is cached from api calls and renders.  This decision keeps things simple initially, but could evolve to store fetched results in an application database potentially with enhanced data, longer history, etc.
 
+Since the initial assumptions of the project were to cache results by zip code, address entry kept simple to bootstrap the process.  Ultimately, the application could add searching based on Address, city, etc. to help users search a location if they don't know the zip code.  
 
-## Weather Data
+Since this first pass focuses on fetching results at the zip-code level only, we encounter the issue that zip codes are not unique across all geographic areas (mainly country). So at this stage, US zip code lookup is enforced.  We make the assumption that cities that share a zip code in the US are geographically close such that results can be shared.
+
+Currently the applicaiton displays current conditions, but is set up to make a second call for forecast information to render as well.  For most free API plans this requires two calls though there are some paid plans that provide a single endpoint to get both sets of data.
+
+## Weather Data Source
 
 This project was set up to use the [Tomorrow API](https://www.tomorrow.io). You will need to sign up and create a free account in order to get your own api key.
 

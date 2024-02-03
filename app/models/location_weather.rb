@@ -12,6 +12,29 @@ class LocationWeather
   RATE_LIMITED_STATUS = 429
   SUCCESS_STATUS = 200
 
+  WEATHER_CODES = {
+    1000 => 'Clear',
+    1100 => 'Mostly Clear',
+    1101 => 'Partly Cloudy',
+    1102 => 'Mostly Cloudy',
+    1001 => 'Cloudy',
+    2100 => 'Light Fog',
+    2101 => 'Fog',
+    4000 => 'Drizzle',
+    4200 => 'Light Rain',
+    4001 => 'Rain',
+    4201 => 'Heavy Rain',
+    5001 => 'Heavy Snow',
+    6000 => 'Freezing Drizzle',
+    6200 => 'Light Freezing Drizzle',
+    6001 => 'Freezing Rain',
+    6201 => 'Heavy Freezing Rain',
+    7102 => 'Light Ice Pellets',
+    7000 => 'Ice Pellets',
+    7101 => 'Heavy Ice Pellets',
+    8000 => 'Thunderstorm'
+  }
+
   attr_reader :zip_code, :current, :current_fetched, :units
 
   def initialize(zip_code)
@@ -64,7 +87,7 @@ class LocationWeather
         @current_fetched = true
         url = URI(CONDITIONS_ENDPOINT_URL)
         wx_params = {
-          'location' => @zip_code,
+          'location' => "#{@zip_code} US",
           'units' => @units,
           'apikey' => api_key
         }
@@ -85,7 +108,6 @@ class LocationWeather
         raise RateLimitError if response.status == RATE_LIMITED_STATUS
         raise WeatherApiError if is_error_status?(response.status)
 
-        Rails.logger.info(response.status)
         response
     end
   end
