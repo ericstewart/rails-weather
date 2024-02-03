@@ -33,7 +33,12 @@ For production, make sure to run rails assets:precompile.
 
 Weather data is cached for 30 minutes by zip code, along with the views that will not change until the data is refreshed.
 
-* Ruby version
+To test caching in development mode, remember to enable caching with `rails dev:cache`
+
+##  Versions
+
+* Ruby version 3.3.x 
+* Rails 7.1.X
 
 Tested with Ruby 3.3.0.
 
