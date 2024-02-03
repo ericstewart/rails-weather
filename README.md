@@ -14,6 +14,23 @@ Currently the applicaiton displays current conditions, but is set up to make a s
 
 All data is currently forced to imperial units, though with an extra API parameter and a bit more view logic this could become user selectable.
 
+### Current Design Tradeoffs
+
+* With no database, there is no data recorded other than logging to track what locations are requested and how often
+* Heavy reliance on caching both for the api results and views.
+
+### Objects
+
+With the current simplicity of the user interface, there is a single Controller called `WeatherController`. It supports an index view taking user input (address information focusing on zip code at present).
+
+The only model is `LocationWeather`, a client for the external weather API.  It abstracts the details of making requests to the external weather API and handling types of responses at a high level.  At present though, the response JSON is passed directly as a Hash for use in the views, so the abstractions currently leaks. As this application evolved, we would want to change this, most likely defining internal fields for data and mapping those within the client or a result object that can adapt the responses to the applicaiton standard (in order to decouple the particular API chosen from the rest of the application).
+
+### Scalability
+
+Due to caching and no database interaction, the application can likely handle reasonably significant traffic by providing a good `CacheStore` and sufficient pool of request handlers.  
+
+If there are a significant number of frequent requesters, adding expiring cache headers would improve caching further, but probably not for most indivdiual users.  The next step here would be to store cached results in a proxy cache by setting headers to "public and cacheable" and fronting the applicaiton with a reverse proxy cache server such as nginx or even a CDN.
+
 ## Weather Data Source
 
 This project was set up to use the [Tomorrow API](https://www.tomorrow.io). You will need to sign up and create a free account in order to get your own api key.
