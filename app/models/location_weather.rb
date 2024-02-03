@@ -1,6 +1,12 @@
 require 'uri'
 require 'net/http'
 
+# LocationWeather is a client for the chosed external weather API
+# (currently Tomorrow.io) and abastracts most of the request interaction details
+# with that api from the rest of the application.
+#
+# At present we present response JSON directly, so that part of the abstraction leaks
+# to the rest of the application.
 class LocationWeather
   WeatherApiError = Class.new(StandardError)
   RateLimitError = Class.new(StandardError)

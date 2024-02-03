@@ -5,7 +5,7 @@ RSpec.describe LocationWeather, type: :model do
 
   context "when proper results are returned" do
   before(:each) do
-    stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=12345&units=imperial").
+    stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=12345%20US&units=imperial").
          with(
            headers: {
           'Accept'=>'application/json',
@@ -49,7 +49,7 @@ end
   end
 
     it 'indicates when the zip code was not found' do
-      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=9999999&units=imperial").
+      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=9999999%20US&units=imperial").
            with(
              headers: {
             'Accept'=>'application/json',
@@ -67,7 +67,7 @@ end
     end
 
     it 'indicates when rate limiting is in effect' do
-      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=9999999&units=imperial").
+      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=9999999%20US&units=imperial").
            with(
              headers: {
             'Accept'=>'application/json',

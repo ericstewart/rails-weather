@@ -2,15 +2,17 @@
 
 This is a web application that serves basic weather information given a requested Zip Code.  To satisfy basic needs, it currently retrieves external weather data and caches results by zip code for display.  
 
-## Design
+## Design Notes
 
-At this stage of functionality, no database is needed since the only persisted data is cached from api calls and renders.  This decision keeps things simple initially, but could evolve to store fetched results in an application database potentially with enhanced data, longer history, etc.
+At this stage of functionality, no database is needed since the only persisted data is cached from api calls and renders.  This decision keeps things simple initially, but could evolve to store fetched results in an application database potentially with enhanced data, longer history, etc.  SQLite 3 is left as a dependency though could be removed if not planning to add functionality requiring a database. 
 
 Since the initial assumptions of the project were to cache results by zip code, address entry kept simple to bootstrap the process.  Ultimately, the application could add searching based on Address, city, etc. to help users search a location if they don't know the zip code.  
 
 Since this first pass focuses on fetching results at the zip-code level only, we encounter the issue that zip codes are not unique across all geographic areas (mainly country). So at this stage, US zip code lookup is enforced.  We make the assumption that cities that share a zip code in the US are geographically close such that results can be shared.
 
 Currently the applicaiton displays current conditions, but is set up to make a second call for forecast information to render as well.  For most free API plans this requires two calls though there are some paid plans that provide a single endpoint to get both sets of data.
+
+All data is currently forced to imperial units, though with an extra API parameter and a bit more view logic this could become user selectable.
 
 ## Weather Data Source
 
@@ -44,6 +46,7 @@ Current Dependencies:
 * Ruby 3.3.x
 * Nodejs
 * yarn
+* sqlite3
 
 ## Running
 
