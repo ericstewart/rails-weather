@@ -76,10 +76,7 @@ end
              }).
            to_return(status: 429, body: rate_limited_payload.to_json, headers: { 'Content-Type' => 'application/json'})
 
-      subject.fetch_current
-      expect(subject.error?).to be_truthy
-      expect(subject).not_to be_found
-      expect(subject.current).to be_a(Hash)
+      expect{subject.fetch_current}.to raise_error(LocationWeather::RateLimitError)
     end
   end
 end

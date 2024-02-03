@@ -2,6 +2,9 @@ require 'uri'
 require 'net/http'
 
 class LocationWeather
+  WeatherApiError = Class.new(StandardError)
+  RateLimitError = Class.new(StandardError)
+
   CONDITIONS_ENDPOINT_URL = "https://api.tomorrow.io/v4/weather/realtime"
 
   INVALID_PARAMETERS_CODE = 400001
@@ -19,7 +22,6 @@ class LocationWeather
     @forecast = {}
     @found = false
     @error = false
-    @rate_limited = false
     @invalid_parameters = true
   end
 
@@ -29,10 +31,6 @@ class LocationWeather
 
   def error?
     !!@error
-  end
-
-  def rate_limited?
-    !!@rate_limited
   end
 
   def invalid_parameters?
@@ -52,6 +50,8 @@ class LocationWeather
   def query_current
     Rails.logger.info("Getting current weather for #{@zip_code}")
     current = request_current_conditions
+    return nil unless current
+
     check_response(current)
 
     current.body
@@ -74,6 +74,17 @@ class LocationWeather
           f.response :json
         end
         response = conn.get('', wx_params, { 'Accept' => 'application/json'})
+
+        # Ideally, we only want to cache responses that shouldn't be retried immediately.
+        # Bad requests that result from locations not found, for example, could be cached
+        # so that we don't try them again anytime soon. Other errors, such as rate limits
+        # are temporary.
+        if response.status == BAD_REQUEST_STATUS
+          raise WeatherApiError unless response.body['code'] == INVALID_PARAMETERS_CODE
+        end
+        raise RateLimitError if response.status == RATE_LIMITED_STATUS
+        raise WeatherApiError if is_error_status?(response.status)
+
         Rails.logger.info(response.status)
         response
     end
@@ -87,10 +98,6 @@ class LocationWeather
       Rails.logger.error(response_body['message'])
       @invalid_parameters = true
       @error = true
-    elsif current.status == RATE_LIMITED_STATUS
-      Rails.logger.error('Rate limiting in effect')
-      @error = true
-      @rate_limited = true
     elsif current.status == SUCCESS_STATUS
       @found = true
     else
@@ -99,5 +106,9 @@ class LocationWeather
       @error = true
     end
     Rails.logger.debug(current)
+  end
+
+  def is_error_status?(status_code)
+     status_code.in?([401, 403, 404, 500])
   end
 end

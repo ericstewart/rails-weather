@@ -1,22 +1,4 @@
 <turbo-frame id='weather_results'>
-
-   <% if @weather && @weather&.error? && @weather&.rate_limited? %>
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-          Results are not available at this time due to too many requests. Please try again later.
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-   <% elsif !@weather&.found? %> 
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-          <strong>Oh no!</strong> The zip-code '<%= @weather&.zip_code %>' was not found.
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-   <% elsif @weather&.error? %> 
-        <div class="alert alert-error alert-dismissible fade show" role="alert">
-          An error occurred and results can not be displayed. Please try again or contact an administrator.
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-   <% else %>
-
     <h1>Weather at <%= @weather.zip_code %></h1>
     <% unless @weather.current_fetched %>
       <span class="badge rounded-pill text-bg-info">cached</span> 
@@ -48,6 +30,4 @@
             </tbody>
         </table>
     <% end %>
-  <% end %>
-
 </turbo-frame>
