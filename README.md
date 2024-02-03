@@ -25,8 +25,9 @@ To keep data retrieval and caching simple, only a zip code is needed. In the fut
 
 ## Setup
 
-Run rails css:build
-For production, make sure to run rails assets:precompile.
+Run `rails css:build`
+
+For production, make sure to run `rails assets:precompile`.
 
 
 ## Caching
