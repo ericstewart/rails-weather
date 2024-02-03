@@ -5,6 +5,7 @@ class LocationWeather
   CONDITIONS_ENDPOINT_URL = "https://api.tomorrow.io/v4/weather/realtime"
 
   INVALID_PARAMETERS_CODE = 400001
+  RATE_LIMITED_ERROR_CODE = 429
 
   attr_reader :zip_code, :current, :current_fetched, :units
 
@@ -15,10 +16,20 @@ class LocationWeather
     @current = {}
     @forecast = {}
     @found = false
+    @error = false
+    @rate_limited = false
   end
 
   def found?
     !!@found
+  end
+
+  def error?
+    !!@error
+  end
+
+  def rate_limited?
+    !!@rate_limited
   end
 
   def fetch_current
@@ -52,6 +63,11 @@ class LocationWeather
     if current.dig('code') == INVALID_PARAMETERS_CODE
       Rails.logger.error(current.dig('type'))
       Rails.logger.error(current.dig('message'))
+      @error = true
+    elsif current.dig('code') == RATE_LIMITED_ERROR_CODE
+      Rails.logger.error('Rate limiting in effect')
+      @error = true
+      @rate_limited = true
     else
       @found = true
     end
