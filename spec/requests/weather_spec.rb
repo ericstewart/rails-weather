@@ -54,7 +54,7 @@ RSpec.describe "Weather", type: :request do
 
   describe "GET /weather_results" do
     it 'renders the results template' do
-      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=qX2IjL8zBwuDS7cAmL1yrOeqFf0FVnaH&location=98753&units=imperial").
+      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=98753&units=imperial").
       with(
         headers: {
        'Accept'=>'application/json',
@@ -71,7 +71,7 @@ RSpec.describe "Weather", type: :request do
     end
 
     it 'renders an alert when an invalid zip is passed' do
-      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=qX2IjL8zBwuDS7cAmL1yrOeqFf0FVnaH&location=9999999&units=imperial").
+      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=9999999&units=imperial").
       with(
         headers: {
        'Accept'=>'application/json',
@@ -96,7 +96,7 @@ RSpec.describe "Weather", type: :request do
     end
 
     it 'renders an alert when data is unavailable due to rate limiting' do
-      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=qX2IjL8zBwuDS7cAmL1yrOeqFf0FVnaH&location=12345&units=imperial").
+      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=12345&units=imperial").
       with(
         headers: {
        'Accept'=>'application/json',

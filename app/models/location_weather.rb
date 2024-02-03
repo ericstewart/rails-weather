@@ -38,6 +38,10 @@ class LocationWeather
 
   private
 
+  def api_key
+    Rails.env.test? ? 'testapikey' : ENV['TOMORROW_API_KEY']
+  end
+
   # Retrieve current conditions for a zip code.  Data may be cached but expected to be sufficiently recent.
   def query_current
     Rails.logger.info("Getting current weather for #{@zip_code}")
@@ -49,7 +53,7 @@ class LocationWeather
         wx_params = {
           'location' => @zip_code,
           'units' => @units,
-          'apikey' => ENV['TOMORROW_API_KEY']
+          'apikey' => api_key
         }
 
         conn = Faraday.new(CONDITIONS_ENDPOINT_URL) do |f|
