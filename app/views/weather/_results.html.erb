@@ -1,40 +1,40 @@
 <turbo-frame id='weather_results'>
     <h1>Weather at <%= @weather.zip_code %></h1>
     <% unless @weather.current_fetched %>
-      <span class="badge rounded-pill text-bg-info">cached</span> 
+        <span class="badge rounded-pill text-bg-info">cached</span>
     <% end %>
 
     <%= cache(['weather_results', @weather.zip_code, @weather.current.dig('data', 'time')]) do %>
         <div class="card">
             <div class="card-body">
-            <table class="table table-sm">
-                <tbody>
-                    <tr>
-                        <th>As of:</th>
-                        <td>
-                            <%= DateTime.parse(@weather.current.dig('data', 'time')).to_formatted_s(:long) %> UTC 
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Location:</th>
-                        <td>
-                            <%= @weather.current.dig('location', 'name') %>
-                            <%= @weather.current.dig('location', 'lat') -%> <%= @weather.current.dig('location', 'lon') %>
-                        </td>
-                    </tr>
-                    <tr>
-                       <th>Conditions</th>
-                       <td><%= display_for_weather_code(@weather.current.dig('data', 'values', 'weatherCode')) %></td>
-                    </tr>
-                    <% @weather_fields.each do |field, title, unit|  %>
+                <table class="table table-sm">
+                    <tbody>
                         <tr>
-                           <th><%= title %></th>
-                           <td><%= [@weather.current.dig('data', 'values', field), unit].join('') %> </td>
+                            <th>As of:</th>
+                            <td>
+                                <%= DateTime.parse(@weather.current.dig('data', 'time')).to_formatted_s(:long) %> UTC
+                            </td>
                         </tr>
-                    <% end %>
-                </tbody>
-            </table>
+                        <tr>
+                            <th>Location:</th>
+                            <td>
+                                <%= @weather.current.dig('location', 'name') %>
+                                <%= @weather.current.dig('location', 'lat') -%> <%= @weather.current.dig('location', 'lon') %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Conditions</th>
+                            <td><%= display_for_weather_code(@weather.current.dig('data', 'values', 'weatherCode')) %></td>
+                        </tr>
+                        <% @weather_fields.each do |field, title, unit|  %>
+                            <tr>
+                                <th><%= title %></th>
+                                <td><%= [@weather.current.dig('data', 'values', field), unit].join('') %> </td>
+                            </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            </div>
         </div>
-      </div>
     <% end %>
 </turbo-frame>

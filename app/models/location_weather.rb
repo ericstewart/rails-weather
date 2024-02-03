@@ -83,33 +83,33 @@ class LocationWeather
 
   def request_current_conditions
     Rails.cache.fetch(['weather','current',@zip_code].join('/'), expires_in: 30.minutes) do
-        Rails.logger.debug("Calling external API")
+      Rails.logger.debug("Calling external API")
 
-        @current_fetched = true
-        url = URI(CONDITIONS_ENDPOINT_URL)
-        wx_params = {
-          'location' => "#{@zip_code} US",
-          'units' => @units,
-          'apikey' => api_key
-        }
+      @current_fetched = true
+      url = URI(CONDITIONS_ENDPOINT_URL)
+      wx_params = {
+        'location' => "#{@zip_code} US",
+        'units' => @units,
+        'apikey' => api_key
+      }
 
-        conn = Faraday.new(CONDITIONS_ENDPOINT_URL) do |f|
-          f.request :json
-          f.response :json
-        end
-        response = conn.get('', wx_params, { 'Accept' => 'application/json'})
+      conn = Faraday.new(CONDITIONS_ENDPOINT_URL) do |f|
+        f.request :json
+        f.response :json
+      end
+      response = conn.get('', wx_params, { 'Accept' => 'application/json'})
 
-        # Ideally, we only want to cache responses that shouldn't be retried immediately.
-        # Bad requests that result from locations not found, for example, could be cached
-        # so that we don't try them again anytime soon. Other errors, such as rate limits
-        # are temporary.
-        if response.status == BAD_REQUEST_STATUS
-          raise WeatherApiError unless response.body['code'] == INVALID_PARAMETERS_CODE
-        end
-        raise RateLimitError if response.status == RATE_LIMITED_STATUS
-        raise WeatherApiError if is_error_status?(response.status)
+      # Ideally, we only want to cache responses that shouldn't be retried immediately.
+      # Bad requests that result from locations not found, for example, could be cached
+      # so that we don't try them again anytime soon. Other errors, such as rate limits
+      # are temporary.
+      if response.status == BAD_REQUEST_STATUS
+        raise WeatherApiError unless response.body['code'] == INVALID_PARAMETERS_CODE
+      end
+      raise RateLimitError if response.status == RATE_LIMITED_STATUS
+      raise WeatherApiError if is_error_status?(response.status)
 
-        response
+      response
     end
   end
 
@@ -127,6 +127,6 @@ class LocationWeather
   end
 
   def is_error_status?(status_code)
-     status_code.in?([401, 403, 404, 500])
+    status_code.in?([401, 403, 404, 500])
   end
 end
