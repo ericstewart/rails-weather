@@ -51,7 +51,6 @@ class LocationWeather
     @forecast = {}
     @found = false
     @error = false
-    @invalid_parameters = true
   end
 
   def found?
@@ -60,10 +59,6 @@ class LocationWeather
 
   def error?
     !!@error
-  end
-
-  def invalid_parameters?
-    !!@invalid_parameters
   end
 
   def fetch_current
@@ -88,7 +83,7 @@ class LocationWeather
 
   def request_current_conditions
     Rails.cache.fetch(['weather','current',@zip_code].join('/'), expires_in: 30.minutes) do
-        Rails.logger.info("Calling external API")
+        Rails.logger.debug("Calling external API")
 
         @current_fetched = true
         url = URI(CONDITIONS_ENDPOINT_URL)
@@ -119,21 +114,16 @@ class LocationWeather
   end
 
   # Determine what happened so that clients of this class have feedback
-  def check_response(current)
-    response_body = current.body
-    if current.status == BAD_REQUEST_STATUS && response_body['code'] == INVALID_PARAMETERS_CODE
-      Rails.logger.error(response_body['type'])
-      Rails.logger.error(response_body['message'])
-      @invalid_parameters = true
-      @error = true
-    elsif current.status == SUCCESS_STATUS
+  def check_response(response)
+    response_body = response.body
+    if response.status == SUCCESS_STATUS
       @found = true
     else
       Rails.logger.error(response_body['type'])
       Rails.logger.error(response_body['message'])
       @error = true
     end
-    Rails.logger.debug(current)
+    Rails.logger.debug(response)
   end
 
   def is_error_status?(status_code)

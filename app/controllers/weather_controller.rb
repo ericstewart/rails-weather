@@ -5,6 +5,7 @@ rescue_from RuntimeError, with: :error_result
 
     def results
         if params[:zip_code].present?
+            Rails.logger.info("weather_request:#{params[:zip_code]}")
           @weather = LocationWeather.new(params[:zip_code].strip)
           @weather.fetch_current
         end

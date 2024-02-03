@@ -61,7 +61,6 @@ end
 
       subject.fetch_current
       expect(subject.error?).to be_truthy
-      expect(subject.invalid_parameters?).to be_truthy
       expect(subject).not_to be_found
       expect(subject.current).to be_a(Hash)
     end
