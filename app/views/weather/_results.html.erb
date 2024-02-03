@@ -1,7 +1,8 @@
 <turbo-frame id='weather_results'>
-   <% if @weather.current['code'] == 400001 %> 
+
+   <% if !@weather&.found? %> 
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-          <strong>Oh no!</strong> The zip-code #{@weather.zip_code} was not found.
+          <strong>Oh no!</strong> The zip-code '<%= @weather&.zip_code %>' was not found.
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
    <% elsif %>

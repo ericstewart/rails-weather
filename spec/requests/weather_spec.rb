@@ -1,0 +1,101 @@
+require 'rails_helper'
+
+RSpec.describe "Weather", type: :request do
+  describe "GET /index" do
+    it 'renders the index template' do
+      get '/'
+      expect(response.code).to eq('200')
+      expect(response.body).to include('Weather for Location')
+    end
+  end
+
+  let(:payload) do
+    {"data"=>
+    {"time"=>"2024-02-03T02:47:00Z",
+     "values"=>
+      {"cloudBase"=>nil,
+       "cloudCeiling"=>nil,
+       "cloudCover"=>9.03,
+       "dewPoint"=>56.29,
+       "freezingRainIntensity"=>0,
+       "humidity"=>97.22,
+       "precipitationProbability"=>0,
+       "pressureSurfaceLevel"=>23.86,
+       "rainIntensity"=>0,
+       "sleetIntensity"=>0,
+       "snowIntensity"=>0,
+       "temperature"=>57.21,
+       "temperatureApparent"=>57.21,
+       "uvHealthConcern"=>0,
+       "uvIndex"=>0,
+       "visibility"=>5.05,
+       "weatherCode"=>1000,
+       "windDirection"=>21.81,
+       "windGust"=>16.63,
+       "windSpeed"=>8}},
+   "location"=>{"lat"=>-1.2482616901397705, "lon"=>36.68090057373047, "name"=>"Kinoo ward, Kikuyu, 12345, Kiambu, Central Kenya, Kenya", "type"=>"postcode"}}
+  end
+
+  let(:invalid_params_payload) do
+    {
+      "code"=>400001,
+      "type"=>"Invalid Query Parameters",
+      "message"=>"The entries provided as query parameters were not valid for the request. Fix parameters and try again: 'location' - failed to query by the term '9999999', try a different term"
+    }
+  end
+
+  describe "GET /weather_results" do
+    it 'renders the results template' do
+      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=qX2IjL8zBwuDS7cAmL1yrOeqFf0FVnaH&location=98753&units=imperial").
+      with(
+        headers: {
+       'Accept'=>'application/json',
+       'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+       'User-Agent'=>'Faraday v2.9.0'
+        }).
+      to_return(status: 200, body: payload.to_json, headers: {'Content-Type' => 'application/json'})
+
+
+      get '/weather_results?zip_code=98753'
+
+      expect(response.code).to eq('200')
+      expect(response.body).to include('Weather at 98753')
+    end
+
+    it 'renders an alert when an invalid zip is passed' do
+      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=qX2IjL8zBwuDS7cAmL1yrOeqFf0FVnaH&location=9999999&units=imperial").
+      with(
+        headers: {
+       'Accept'=>'application/json',
+       'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+       'User-Agent'=>'Faraday v2.9.0'
+        }).
+      to_return(status: 200, body: invalid_params_payload.to_json, headers: {'Content-Type' => 'application/json'})
+
+      get '/weather_results?zip_code=9999999'
+
+      expect(response.code).to eq('200')
+      expect(response.body).to include('Oh no!')
+      expect(response.body).to include('The zip-code \'9999999\' was not found.')
+    end
+
+    it 'renders an alert when no zip is passed' do
+
+      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=qX2IjL8zBwuDS7cAmL1yrOeqFf0FVnaH&location=&units=imperial").
+      with(
+        headers: {
+       'Accept'=>'application/json',
+       'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+       'User-Agent'=>'Faraday v2.9.0'
+        }).
+      to_return(status: 200, body: invalid_params_payload.to_json, headers: {'Content-Type' => 'application/json'})
+
+      get '/weather_results?zip_code='
+
+      expect(response.code).to eq('200')
+      expect(response.body).to include('Oh no!')
+      expect(response.body).to include('The zip-code \'\' was not found.')
+    end
+
+  end
+end

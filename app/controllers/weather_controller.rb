@@ -3,17 +3,11 @@ class WeatherController < ApplicationController
     end
 
     def results
-        @realtime_fetched = false
-
-        @weather = LocationWeather.new(params['zip_code'])
-
-        puts @realtime_results
+        if params[:zip_code].present?
+          @weather = LocationWeather.new(params[:zip_code])
+          @weather.fetch_current
+        end
 
         render partial: 'results'
-    end
-
-    private
-
-    def current_weather(params)
     end
 end

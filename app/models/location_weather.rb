@@ -2,8 +2,9 @@ require 'uri'
 require 'net/http'
 
 class LocationWeather
-
   CONDITIONS_ENDPOINT_URL = "https://api.tomorrow.io/v4/weather/realtime"
+
+  INVALID_PARAMETERS_CODE = 400001
 
   attr_reader :zip_code, :current, :current_fetched, :units
 
@@ -13,16 +14,23 @@ class LocationWeather
     @units = 'imperial'
     @current = {}
     @forecast = {}
+    @found = false
+  end
 
-    fetch_current
+  def found?
+    !!@found
+  end
+
+  def fetch_current
+    @current = query_current
   end
 
   private
 
   # Retrieve current conditions for a zip code.  Data may be cached but expected to be sufficiently recent.
-  def fetch_current
+  def query_current
     Rails.logger.info("Getting current weather for #{@zip_code}")
-    @current = Rails.cache.fetch(['weather','current',@zip_code].join('/'), expires_in: 30.minutes) do
+    current = Rails.cache.fetch(['weather','current',@zip_code].join('/'), expires_in: 30.minutes) do
         Rails.logger.info("Calling external API")
 
         @current_fetched = true
@@ -41,7 +49,13 @@ class LocationWeather
         response.body
     end
 
-    Rails.logger.debug(@current)
-    @current
+    if current.dig('code') == INVALID_PARAMETERS_CODE
+      Rails.logger.error(current.dig('type'))
+      Rails.logger.error(current.dig('message'))
+    else
+      @found = true
+    end
+    Rails.logger.debug(current)
+    current
   end
 end
