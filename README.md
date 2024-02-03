@@ -9,7 +9,7 @@ At this stage of functionality, no database is needed since the only persisted d
 
 ## Weather Data
 
-This project was set up to use the [Tomorrow API](https://www.tomorrow.com/api). You will need to sign up and create a free account in order to get your own api key.
+This project was set up to use the [Tomorrow API](https://www.tomorrow.io/api). You will need to sign up and create a free account in order to get your own api key.
 
 To configure the api key for the application, set the environment variablie `TOMORROW_API_KEY` so that it will
 be available to the Rails application.
