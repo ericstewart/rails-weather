@@ -9,7 +9,7 @@ At this stage of functionality, no database is needed since the only persisted d
 
 ## Weather Data
 
-This project was set up to use the [Tomorrow API](https://www.tomorrow.io/api). You will need to sign up and create a free account in order to get your own api key.
+This project was set up to use the [Tomorrow API](https://www.tomorrow.io). You will need to sign up and create a free account in order to get your own api key.
 
 To configure the api key for the application, set the environment variablie `TOMORROW_API_KEY` so that it will
 be available to the Rails application.
@@ -18,6 +18,8 @@ To keep data retrieval and caching simple, only a zip code is needed. In the fut
 
 ## Setup
 
+Run rails css:build
+For production, make sure to run rails assets:precompile.
 
 
 ## Caching
@@ -36,6 +38,7 @@ Current Dependencies:
 
 * Ruby 3.3.x
 * Nodejs
+* yarn
 
 ## Running
 
