@@ -110,5 +110,22 @@ RSpec.describe "Weather", type: :request do
       expect(response.body).to include('Results are not available at this time due to too many requests.')
       expect(response.body).to include('Please try again later.')
     end
+
+    it 'renders an error when an unexpected RuntimeError occurs' do
+      stub_request(:get, "https://api.tomorrow.io/v4/weather/realtime?apikey=testapikey&location=12345&units=imperial").
+      with(
+        headers: {
+       'Accept'=>'application/json',
+       'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+       'User-Agent'=>'Faraday v2.9.0'
+        }).
+      to_raise(RuntimeError)
+
+      get '/weather_results?zip_code=12345'
+
+      expect(response.code).to eq('200')
+      expect(response.body).to include('An error occurred')
+      expect(response.body).to include('Please try again')
+    end
   end
 end
