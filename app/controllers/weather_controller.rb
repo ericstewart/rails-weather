@@ -1,22 +1,17 @@
 class WeatherController < ApplicationController
   rescue_from RuntimeError, with: :error_result
-  def index
-  end
+
+  def index; end
 
   def results
-    if params[:zip_code].present?
-      Rails.logger.info("weather_request:#{params[:zip_code]}")
-      @weather = LocationWeather.new(params[:zip_code].strip)
-      @weather.fetch_current
-    end
+    fetch_weather if params[:zip_code].present?
 
-    if !@weather&.found?
-      render partial: 'not_found'
-    else
+    if @weather&.found?
       set_weather_fields
       render partial: 'results'
+    else
+      render partial: 'not_found'
     end
-
   rescue LocationWeather::RateLimitError
     render partial: 'too_many_requests'
   rescue LocationWeather::WeatherApiError
@@ -41,5 +36,11 @@ class WeatherController < ApplicationController
       ['visibility', 'Visibility', 'mi'],
       ['cloudCover', 'Cloud Cover', 'mi']
     ]
+  end
+
+  def fetch_weather
+    Rails.logger.info("weather_request:#{params[:zip_code]}")
+    @weather = LocationWeather.new(params[:zip_code].strip)
+    @weather.fetch_current
   end
 end
